@@ -54,6 +54,7 @@ To assess the effectiveness of a Zero Trust implementation in Azure, you should 
 
 By thoroughly evaluating these key aspects, you can assess the overall effectiveness of your Zero Trust implementation in Azure and identify areas for further improvement to enhance your security posture.
 
+## Azure keys and secrets rotation
 Rotating keys and secrets is a critical security practice to ensure the integrity and confidentiality of your applications. Here’s a step-by-step guide on how to build a solution for keys and secret rotation using Azure Key Vault and Azure DevOps:
 
 ### Prerequisites
@@ -137,8 +138,8 @@ Rotating keys and secrets is a critical security practice to ensure the integrit
   az keyvault key create --vault-name $(keyVaultName) --name $(keyName) --ops encrypt decrypt --kty RSA
   ```
 
-**Automate Secret Generation**: You can integrate the generation of new secret values with tools like Azure Functions or custom scripts to dynamically generate new values.
+- **Automate Secret Generation**: You can integrate the generation of new secret values with tools like Azure Functions or custom scripts to dynamically generate new values.
 
-**Security Best Practices**: Ensure that the service principal used in the Azure DevOps service connection has minimal necessary permissions, ideally limited to the Key Vault.
+- **Security Best Practices**: Ensure that the service principal used in the Azure DevOps service connection has minimal necessary permissions, ideally limited to the Key Vault.
 
 By following these steps, you can automate the rotation of keys and secrets stored in Azure Key Vault using Azure DevOps, enhancing the security of your applications.
