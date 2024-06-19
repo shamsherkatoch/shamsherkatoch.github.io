@@ -277,3 +277,120 @@ public class Program
 ## Conclusion
 
 By following these steps, you can securely access Azure Key Vault secrets in both .NET Full Framework and .NET 6 applications using User Managed Identity. This approach enhances security by removing hardcoded credentials and utilizing Azure's identity management capabilities. For further details and advanced configurations, refer to the [Azure Key Vault documentation](https://docs.microsoft.com/en-us/azure/key-vault/).
+
+
+# Design Paper: Using Azure Key Vault for Storing Secrets Instead of Azure DevOps Secrets Variable
+
+## Introduction
+
+Azure DevOps provides a convenient way to store and manage secrets using its Secrets variable feature. However, using Azure Key Vault offers a more secure, scalable, and flexible approach for managing secrets. This paper outlines the advantages, architecture, implementation steps, and best practices for using Azure Key Vault instead of Azure DevOps Secrets variables.
+
+## Advantages of Using Azure Key Vault
+
+1. **Enhanced Security**:
+   - **Centralized Management**: Azure Key Vault provides a centralized repository for managing secrets, keys, and certificates.
+   - **Access Control**: Fine-grained access policies ensure that only authorized applications and users can access secrets.
+   - **Auditing and Monitoring**: Detailed logging and monitoring capabilities help track access and usage patterns.
+
+2. **Scalability**:
+   - **Automated Secret Rotation**: Azure Key Vault supports automated secret rotation, reducing the risk of using outdated or compromised secrets.
+   - **Integration with Azure Services**: Seamlessly integrates with other Azure services, enabling a scalable solution for managing secrets across different environments and applications.
+
+3. **Compliance**:
+   - **Regulatory Compliance**: Azure Key Vault helps meet regulatory requirements by providing a secure and compliant way to manage sensitive information.
+
+## Architecture
+
+The architecture involves the following components:
+1. **Azure Key Vault**: Stores secrets, keys, and certificates.
+2. **Azure DevOps Pipeline**: Retrieves secrets from Azure Key Vault during build and release processes.
+3. **Azure Active Directory (AAD)**: Manages authentication and authorization for accessing Azure Key Vault.
+
+## Implementation Steps
+
+### Step 1: Create Azure Key Vault
+
+1. **Navigate to Azure Portal**.
+2. **Create a New Key Vault**:
+   - Go to "Create a resource" > "Security + Identity" > "Key Vault".
+   - Configure the Key Vault (name, resource group, region) and create it.
+
+3. **Add Secrets**:
+   - Navigate to the created Key Vault.
+   - Go to "Secrets" and add new secrets.
+
+### Step 2: Configure Azure DevOps to Use Azure Key Vault
+
+1. **Service Connection in Azure DevOps**:
+   - Go to "Project settings" > "Service connections".
+   - Add a new service connection for Azure Resource Manager, selecting the appropriate subscription and Key Vault.
+
+2. **Grant Access to Azure DevOps**:
+   - In the Azure portal, navigate to your Key Vault.
+   - Go to "Access policies" and add a new policy.
+   - Assign necessary permissions (e.g., Get, List) to the Azure DevOps service principal.
+
+### Step 3: Update Azure DevOps Pipeline to Retrieve Secrets
+
+1. **Install Azure Key Vault Task**:
+   - Ensure the Azure Key Vault task is available in your Azure DevOps pipeline.
+
+2. **Retrieve Secrets in Pipeline**:
+   - Update your pipeline YAML or classic pipeline to include tasks for retrieving secrets from Azure Key Vault.
+   
+   Example YAML snippet:
+   ```yaml
+   trigger:
+   - main
+
+   pool:
+     vmImage: 'ubuntu-latest'
+
+   variables:
+     - group: 'KeyVaultSecrets'
+
+   steps:
+   - task: AzureKeyVault@2
+     inputs:
+       azureSubscription: '<Service Connection Name>'
+       KeyVaultName: '<KeyVault Name>'
+       SecretsFilter: '*'
+       RunAsPreJob: true
+
+   - script: echo $(mySecret)
+     displayName: 'Display secret'
+   ```
+
+### Step 4: Use Retrieved Secrets in Pipeline Tasks
+   - Use the retrieved secrets in subsequent tasks within your pipeline.
+   
+   Example:
+   ```yaml
+   steps:
+   - script: |
+       echo "Using secret $(mySecret) in build process"
+     displayName: 'Use Secret in Build'
+   ```
+
+## Best Practices
+
+1. **Least Privilege Principle**:
+   - Grant the minimum necessary permissions to Azure DevOps and other applications.
+
+2. **Automated Secret Rotation**:
+   - Implement automated secret rotation to minimize the risk of using stale secrets.
+
+3. **Monitoring and Auditing**:
+   - Enable diagnostic logging for Azure Key Vault and monitor access patterns.
+
+4. **Environment Segregation**:
+   - Use separate Key Vaults for different environments (e.g., development, testing, production).
+
+5. **Secure Access**:
+   - Use managed identities or service principals with Azure AD for secure access to Azure Key Vault.
+
+## Conclusion
+
+Switching from Azure DevOps Secrets variables to Azure Key Vault provides enhanced security, scalability, and compliance for managing sensitive information. By following the steps and best practices outlined in this paper, organizations can implement a robust solution for securely managing secrets across their DevOps pipelines and applications. For further details and advanced configurations, refer to the [Azure Key Vault documentation](https://docs.microsoft.com/en-us/azure/key-vault/).
+
+
