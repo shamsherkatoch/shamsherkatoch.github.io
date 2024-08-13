@@ -761,6 +761,7 @@ By following this implementation plan, you can automate the deployment of an Azu
 ### Microsoft Graph API to read from Entra ID
 
 # Prerequisites
+'''pwsh
 $tenantId = "<Your-Tenant-ID>"
 $clientId = "<Your-Client-ID>"
 $clientSecret = "<Your-Client-Secret>"
@@ -824,3 +825,4 @@ $userRoles.value | ForEach-Object {
         ResourceId     = $_.resourceId
     }
 }
+'''
