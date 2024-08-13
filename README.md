@@ -757,3 +757,69 @@ stages:
 ### Conclusion
 
 By following this implementation plan, you can automate the deployment of an Azure Platform using Azure Bicep and Azure DevOps pipelines. This approach ensures a consistent, repeatable, and automated deployment process, providing a solid foundation for your Azure infrastructure.
+
+Microsoft Graph API to read and get data about Microsoft Entra ID users, roles, and groups 
+# Prerequisites
+$tenantId = "<Your-Tenant-ID>"
+$clientId = "<Your-Client-ID>"
+$clientSecret = "<Your-Client-Secret>"
+$resource = "https://graph.microsoft.com/"
+$authority = "https://login.microsoftonline.com/$tenantId"
+
+# Acquire Access Token
+$body = @{
+    grant_type    = "client_credentials"
+    client_id     = $clientId
+    client_secret = $clientSecret
+    scope         = "https://graph.microsoft.com/.default"
+}
+
+$tokenResponse = Invoke-RestMethod -Method Post -Uri "$authority/oauth2/v2.0/token" -ContentType "application/x-www-form-urlencoded" -Body $body
+$accessToken = $tokenResponse.access_token
+
+# Function to make Graph API calls
+function Invoke-GraphApi {
+    param (
+        [string]$uri,
+        [string]$method = "GET",
+        $body = $null
+    )
+    $headers = @{
+        Authorization = "Bearer $accessToken"
+    }
+    return Invoke-RestMethod -Method $method -Uri $uri -Headers $headers -Body $body -ContentType "application/json"
+}
+
+# 1. List all users
+$users = Invoke-GraphApi -uri "https://graph.microsoft.com/v1.0/users"
+$users.value | ForEach-Object {
+    [PSCustomObject]@{
+        UserPrincipalName = $_.userPrincipalName
+        DisplayName       = $_.displayName
+        Email             = $_.mail
+        JobTitle          = $_.jobTitle
+        Department        = $_.department
+    }
+}
+
+# 2. List all groups
+$groups = Invoke-GraphApi -uri "https://graph.microsoft.com/v1.0/groups"
+$groups.value | ForEach-Object {
+    [PSCustomObject]@{
+        GroupName = $_.displayName
+        GroupId   = $_.id
+        GroupType = $_.groupTypes
+    }
+}
+
+# 3. List all roles assigned to a user
+$userId = "<User-ID>" # Replace with the actual User ID
+$userRoles = Invoke-GraphApi -uri "https://graph.microsoft.com/v1.0/users/$userId/appRoleAssignments"
+$userRoles.value | ForEach-Object {
+    [PSCustomObject]@{
+        RoleName       = $_.resourceDisplayName
+        RoleId         = $_.appRoleId
+        AssignedDate   = $_.createdDateTime
+        ResourceId     = $_.resourceId
+    }
+}
