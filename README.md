@@ -758,7 +758,8 @@ stages:
 
 By following this implementation plan, you can automate the deployment of an Azure Platform using Azure Bicep and Azure DevOps pipelines. This approach ensures a consistent, repeatable, and automated deployment process, providing a solid foundation for your Azure infrastructure.
 
-Microsoft Graph API to read and get data about Microsoft Entra ID users, roles, and groups 
+### Microsoft Graph API to read from Entra ID
+
 # Prerequisites
 $tenantId = "<Your-Tenant-ID>"
 $clientId = "<Your-Client-ID>"
