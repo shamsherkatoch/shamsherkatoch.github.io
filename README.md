@@ -54,8 +54,7 @@ To assess the effectiveness of a Zero Trust implementation in Azure, you should 
 
 By thoroughly evaluating these key aspects, you can assess the overall effectiveness of your Zero Trust implementation in Azure and identify areas for further improvement to enhance your security posture.
 
-##Zero trust With or without ALZ 
-
+## Zero trust With or without ALZ
 Technically, many of the security features and principles mentioned can be implemented without setting up a formal Azure Landing Zone. However, using an Azure Landing Zone offers significant advantages and streamlines the process, providing a structured and efficient way to achieve these security and compliance goals. Here’s a breakdown of what can be achieved without a Landing Zone and the key benefits of using one:
 
 1. Identity Security and Access Management
